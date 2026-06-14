@@ -29,9 +29,19 @@ export function OffsetPaginationPage() {
     <div>
       <h1>Offset Pagination</h1>
 
-      {data.results.map((pokemon: any) => (
-        <p key={pokemon.name}>{pokemon.name}</p>
-      ))}
+      {data.results.map((pokemon: any) => {
+        const pokemonIndex = pokemon.url
+          .split("/")
+          .filter(Boolean)
+          .at(-1);
+        const photoUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemonIndex}.png`;
+        return (
+          <div key={pokemon.name}>
+            <img src={photoUrl} />
+            <p>{pokemon.name}</p>
+          </div>
+        );
+      })}
 
       <button disabled={page === 1} onClick={() => goToPage(page - 1)}>
         Previous
