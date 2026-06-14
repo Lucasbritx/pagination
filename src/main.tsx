@@ -1,10 +1,28 @@
 import { createRoot } from 'react-dom/client'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import {
+  createBrowserRouter,
+  Navigate,
+  RouterProvider,
+} from 'react-router'
 import './index.css'
-import App from './App.tsx'
-import { BrowserRouter } from 'react-router'
+import { OffsetPaginationPage } from './pages/offset-pagination'
+
+const queryClient = new QueryClient()
+
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <Navigate to="/offset-pagination" replace />,
+  },
+  {
+    path: '/offset-pagination',
+    element: <OffsetPaginationPage />,
+  },
+])
 
 createRoot(document.getElementById('root')!).render(
-  <BrowserRouter>
-    <App />
-  </BrowserRouter>,
+  <QueryClientProvider client={queryClient}>
+    <RouterProvider router={router} />
+  </QueryClientProvider>,
 )
