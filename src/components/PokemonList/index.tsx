@@ -7,7 +7,7 @@ export function PokemonList({ pokemons }: any) {
   if (!pokemons) return null;
 
   return (
-    <div>
+    <div className="flex flex-wrap gap-4">
       {pokemons.map((pokemon: any) => (
         <PokemonCard key={pokemon.name} pokemon={pokemon} />
       ))}
