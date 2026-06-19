@@ -2,10 +2,7 @@ import { http, HttpResponse } from "msw";
 
 import pokemonData from "../../pokemon-150.json";
 
-const pokemon = pokemonData.results.map((pokemon, index) => ({
-  id: index + 1,
-  name: pokemon.name,
-}));
+const pokemon = pokemonData.results.map((pokemon) => pokemon);
 
 export const handlers = [
   http.get("/api/pokemon-cursor", ({ request }) => {
