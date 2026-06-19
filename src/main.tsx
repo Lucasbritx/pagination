@@ -1,28 +1,34 @@
-import { createRoot } from 'react-dom/client'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import {
-  createBrowserRouter,
-  Navigate,
-  RouterProvider,
-} from 'react-router'
-import './index.css'
-import { OffsetPaginationPage } from './pages/offset-pagination'
+import { createRoot } from "react-dom/client";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { createBrowserRouter, Navigate, RouterProvider } from "react-router";
+import "./index.css";
+import { OffsetPaginationPage } from "./pages/offset-pagination";
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient();
 
 const router = createBrowserRouter([
   {
-    path: '/',
+    path: "/",
     element: <Navigate to="/offset-pagination" replace />,
   },
   {
-    path: '/offset-pagination',
+    path: "/offset-pagination",
     element: <OffsetPaginationPage />,
   },
-])
+]);
 
-createRoot(document.getElementById('root')!).render(
-  <QueryClientProvider client={queryClient}>
-    <RouterProvider router={router} />
-  </QueryClientProvider>,
-)
+async function enableMocking() {
+  const { worker } = await import("./mocks/browser");
+
+  return worker.start({
+    onUnhandledRequest: "bypass",
+  });
+}
+
+enableMocking().then(() => {
+  createRoot(document.getElementById("root")!).render(
+    <QueryClientProvider client={queryClient}>
+      <RouterProvider router={router} />
+    </QueryClientProvider>,
+  );
+});
