@@ -1,45 +1,60 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useSearchParams } from "react-router";
 import { PokemonList } from "../../components/PokemonList";
 
-const pageSize = 20;
+type Pokemon = {
+  id: number;
+  name: string;
+};
+
+type CursorResponse = {
+  items: Pokemon[];
+  nextCursor: string | null;
+  hasNextPage: boolean;
+};
+
+async function fetchPokemonByCursor(cursor: string | null) {
+  const params = new URLSearchParams();
+
+  params.set("limit", "10");
+
+  if (cursor) {
+    params.set("cursor", cursor);
+  }
+
+  const response = await fetch(`/api/pokemon-cursor?${params.toString()}`);
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch cursor page");
+  }
+
+  return response.json() as Promise<CursorResponse>;
+}
 
 export function CursorPaginationPage() {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [cursor, setCursor] = useState<string | null>(null);
 
-  const page = Number(searchParams.get("page") ?? 1);
-  const offset = (page - 1) * pageSize;
-
-  const { data, isLoading } = useQuery({
-    queryKey: ["pokemon-offset", page],
-    queryFn: async () => {
-      const res = await fetch(
-        `https://pokeapi.co/api/v2/pokemon?offset=${offset}&limit=${pageSize}`,
-      );
-      return res.json();
-    },
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["pokemon-cursor", cursor],
+    queryFn: () => fetchPokemonByCursor(cursor),
   });
 
-  if (isLoading) return <p>Loading...</p>;
+  console.log(`cursor data - `, data);
 
-  function goToPage(nextPage: number) {
-    setSearchParams({ page: String(nextPage) });
-  }
+  if (isLoading) return <p>Loading...</p>;
+  if (isError) return <p>Error loading Pokémon.</p>;
 
   return (
     <div>
       <h1>Cursor Pagination</h1>
 
-      <PokemonList pokemons={data.results} />
+      <PokemonList pokemons={data?.items} />
 
-      <button disabled={page === 1} onClick={() => goToPage(page - 1)}>
-        Previous
-      </button>
-
-      <span> Page {page} </span>
-
-      <button disabled={!data.next} onClick={() => goToPage(page + 1)}>
-        Next
+      <button
+        disabled={!data?.hasNextPage}
+        onClick={() => setCursor(data?.nextCursor ?? null)}
+      >
+        Next cursor
       </button>
     </div>
   );
