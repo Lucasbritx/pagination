@@ -1,17 +1,11 @@
 import { http, HttpResponse } from "msw";
 
-const pokemon = [
-  { id: 1, name: "bulbasaur" },
-  { id: 2, name: "ivysaur" },
-  { id: 3, name: "venusaur" },
-  { id: 4, name: "charmander" },
-  { id: 5, name: "charmeleon" },
-  { id: 6, name: "charizard" },
-  { id: 7, name: "squirtle" },
-  { id: 8, name: "wartortle" },
-  { id: 9, name: "blastoise" },
-  { id: 10, name: "caterpie" },
-];
+import pokemonData from "../../pokemon-150.json";
+
+const pokemon = pokemonData.results.map((pokemon, index) => ({
+  id: index + 1,
+  name: pokemon.name,
+}));
 
 export const handlers = [
   http.get("/api/pokemon-cursor", ({ request }) => {
