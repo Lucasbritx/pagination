@@ -1,17 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { PokemonList } from "../../components/PokemonList";
-
-type Pokemon = {
-  id: number;
-  name: string;
-};
-
-type CursorResponse = {
-  items: Pokemon[];
-  nextCursor: string | null;
-  hasNextPage: boolean;
-};
+import type { CursorResponse } from "../../types/cursorResponse";
 
 async function fetchPokemonByCursor(cursor: string | null) {
   const params = new URLSearchParams();
